@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Se nos casa el Gringo Raysis</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top, #2e7d32 0%, #1b4332 35%, #0b1f14 100%);
+      color: #ffffff;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .background-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.10), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(255,215,0,0.12), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.06), transparent 30%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 40px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    .emoji-top {
+      font-size: 3rem;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 34px;
+      font-weight: 500;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(90px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .time-box {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 20px;
+      padding: 22px 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .time-number {
+      display: block;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .time-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+      font-weight: 600;
+    }
+
+    .footer-emojis {
+      font-size: 2.1rem;
+      margin-top: 8px;
+    }
+
+    .target-date {
+      margin-top: 18px;
+      font-size: 0.95rem;
+      opacity: 0.78;
+      font-weight: 500;
+    }
+
+    .expired {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 32px 18px;
+        border-radius: 22px;
+      }
+
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .emoji-top {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-glow"></div>
+
+  <main class="container">
+    <section class="card">
+      <div class="emoji-top">
+        <span>🐊</span>
+        <span>👰🏼‍♂️</span>
+        <span>💍</span>
+      </div>
+
+      <h1>Se nos casa el Gringo Raysis</h1>
+      <p class="subtitle">Falta cada vez menos para el gran día</p>
+
+      <div class="countdown" id="countdown">
+        <div class="time-box">
+          <span class="time-number" id="days">00</span>
+          <span class="time-label">Días</span>
+        </div>
+        <div class="time-box">
+          <span class="time-number" id="hours">00</span>
+          <span class="time-label">Horas</span>
+        </div>
+        <div class="time-box">
+          <span class="time-number" id="minutes">00</span>
+          <span class="time-label">Minutos</span>
+        </div>
+        <div class="time-box">
+          <span class="time-number" id="seconds">00</span>
+          <span class="time-label">Segundos</span>
+        </div>
+      </div>
+
+      <div class="footer-emojis">🐊👰🏼‍♂️💍</div>
+      <p class="target-date">Cuenta regresiva para el gran día Caimán</p>
+      <p class="expired" id="expiredMessage" style="display: none;">Llegó el día 💍</p>
+    </section>
+  </main>
+
+  <script>
+    const targetDate = new Date("2026-12-07T00:00:00");
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const expiredMessage = document.getElementById("expiredMessage");
+    const countdown = document.getElementById("countdown");
+
+    function formatNumber(number) {
+      return String(number).padStart(2, "0");
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        countdown.style.display = "none";
+        expiredMessage.style.display = "block";
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / (1000 * 60)) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      daysEl.textContent = formatNumber(days);
+      hoursEl.textContent = formatNumber(hours);
+      minutesEl.textContent = formatNumber(minutes);
+      secondsEl.textContent = formatNumber(seconds);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
