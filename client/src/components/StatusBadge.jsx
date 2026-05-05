@@ -1,0 +1,2 @@
+export const labels={CREATED:'Creada',SENT_TO_SUPPLIER:'Enviada',RECEIVED_BY_SUPPLIER:'Recibida',ACCEPTED:'Aceptada',REJECTED:'Rechazada',INVOICE_UPLOADED:'Factura cargada',VALUED:'Valorizada',DELIVERED:'Entregada',CLOSED:'Cerrada'};
+export function StatusBadge({ status }){ return <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-800">{labels[status] || status}</span>; }

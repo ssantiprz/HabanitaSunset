@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: materiales_mvp
+    ports: ["5432:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+  server:
+    build: ./server
+    env_file: .env.example
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/materiales_mvp?schema=public
+      JWT_SECRET: cambiar-este-secreto
+      PORT: 4000
+      UPLOAD_DIR: uploads
+    ports: ["4000:4000"]
+    volumes: [uploads_data:/app/uploads]
+    depends_on: [db]
+  client:
+    build: ./client
+    environment:
+      VITE_API_URL: http://localhost:4000/api
+    ports: ["5173:80"]
+    depends_on: [server]
+volumes:
+  postgres_data:
+  uploads_data:

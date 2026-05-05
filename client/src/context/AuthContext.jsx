@@ -1,0 +1,5 @@
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { api, setUnauthorizedHandler } from '../api/client';
+const AuthContext = createContext(null);
+export function AuthProvider({ children }){ const [user,setUser]=useState(null); const [loading,setLoading]=useState(true); const logout=()=>{ localStorage.removeItem('token'); setUser(null); }; useEffect(()=>{ setUnauthorizedHandler(logout); const token=localStorage.getItem('token'); if(!token){ setLoading(false); return; } api.get('/auth/me').then(r=>setUser(r.user)).catch(logout).finally(()=>setLoading(false)); },[]); const login=async(email,password)=>{ const r=await api.post('/auth/login',{ email,password }); localStorage.setItem('token', r.token); setUser(r.user); return r.user; }; const value=useMemo(()=>({ user, loading, login, logout, isAdmin:user?.role==='ADMIN', isSupplier:user?.role==='PROVEEDOR', isRequester:user?.role==='SOLICITANTE' }),[user,loading]); return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>; }
+export const useAuth=()=>useContext(AuthContext);
