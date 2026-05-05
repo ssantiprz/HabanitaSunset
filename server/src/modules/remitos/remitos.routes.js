@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { prisma } from '../../config/prisma.js';
+import { authRequired, permit } from '../../middlewares/auth.js';
+import { upload } from '../uploads/upload.service.js';
+import { addHistory, includeFull } from '../requests/request.helpers.js';
+import { validate } from '../../middlewares/errorHandler.js';
+const router = Router();
+router.post('/:requestId', authRequired, permit('PROVEEDOR'), upload.single('file'), [body('deliveredTo').notEmpty(), validate], async (req,res,next)=>{ try { const requestId=Number(req.params.requestId); const current = await prisma.request.findFirst({ where:{ id:requestId, supplierId:req.user.supplierId } }); if (!current) return res.status(404).json({ message:'Solicitud no encontrada para este proveedor' }); const attachment = req.file ? await prisma.attachment.create({ data:{ requestId, uploadedById:req.user.id, type:'REMITO', fileName:req.file.filename, originalName:req.file.originalname, mimeType:req.file.mimetype, size:req.file.size, path:req.file.path, url:`/uploads/${req.file.filename}` } }) : null; await prisma.remito.upsert({ where:{ requestId }, update:{ deliveryDate:new Date(req.body.deliveryDate), deliveredTo:req.body.deliveredTo, observations:req.body.observations, attachmentId:attachment?.id }, create:{ requestId, deliveryDate:new Date(req.body.deliveryDate), deliveredTo:req.body.deliveredTo, observations:req.body.observations, attachmentId:attachment?.id } }); const updated = await prisma.request.update({ where:{ id:requestId }, data:{ status:'DELIVERED' }, include:includeFull }); await addHistory(requestId, 'DELIVERED', req.user.id, `Entrega registrada a ${req.body.deliveredTo}`); res.status(201).json(updated); } catch(e){ next(e); } });
+export default router;

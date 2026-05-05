@@ -1,0 +1,7 @@
+{
+  "name":"materiales-api","version":"1.0.0","type":"module","main":"src/server.js",
+  "scripts":{"dev":"nodemon src/server.js","start":"node src/server.js","lint":"node --check src/server.js && find src -name '*.js' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 node --check","prisma:migrate":"prisma migrate dev","seed":"node prisma/seed.js"},
+  "dependencies":{"@prisma/client":"^6.7.0","bcryptjs":"^3.0.2","cors":"^2.8.5","dotenv":"^16.5.0","express":"^4.21.2","express-validator":"^7.2.1","helmet":"^8.1.0","jsonwebtoken":"^9.0.2","multer":"^1.4.5-lts.1","morgan":"^1.10.0"},
+  "devDependencies":{"nodemon":"^3.1.10","prisma":"^6.7.0"},
+  "prisma":{"seed":"node prisma/seed.js"}
+}
